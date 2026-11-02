@@ -22,7 +22,20 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Достать ключ подписи
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > release.jks
+            echo "Подписываю постоянным ключом"
+          else
+            echo "::warning::Секрет KEYSTORE_BASE64 не задан — APK будет с временным ключом"
+          fi
+
       - name: Сборка
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
         run: gradle assembleRelease --no-daemon
 
       - uses: actions/upload-artifact@v4

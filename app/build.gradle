@@ -10,15 +10,31 @@ android {
         applicationId 'ru.sova.liclock'
         minSdk 26
         targetSdk 34
-        versionCode 1
-        versionName '1.0'
+        // номер версии растёт с каждой сборкой на GitHub — RuStore требует это для обновлений
+        def run = (System.getenv("GITHUB_RUN_NUMBER") ?: "1") as int
+        versionCode run
+        versionName "1.0.${run}"
+    }
+
+    // Постоянный ключ: в GitHub Actions берётся из секретов KEYSTORE_BASE64 и KEYSTORE_PASSWORD.
+    // Если секретов нет, APK подписывается временным debug-ключом.
+    def ksFile = file("${rootDir}/release.jks")
+    def ksPass = System.getenv("KEYSTORE_PASSWORD")
+    signingConfigs {
+        release {
+            if (ksFile.exists() && ksPass) {
+                storeFile ksFile
+                storePassword ksPass
+                keyAlias 'liclock'
+                keyPassword ksPass
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            // подписываем debug-ключом, чтобы APK сразу ставился в машину
-            signingConfig signingConfigs.debug
+            signingConfig (ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug
         }
     }
 
