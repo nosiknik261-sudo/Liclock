@@ -27,7 +27,13 @@ jobs:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > release.jks
+            echo "$KEYSTORE_BASE64" | tr -d '\r\n ' | base64 -d > release.jks
+            SIZE=$(wc -c < release.jks)
+            echo "Длина секрета: ${#KEYSTORE_BASE64} символов, ключ после расшифровки: $SIZE байт (ожидается 4314)"
+            if [ "$SIZE" -lt 1000 ]; then
+              echo "::error::В секрете KEYSTORE_BASE64 не то содержимое — нужно вставить весь файл keystore_base64.txt"
+              exit 1
+            fi
             echo "Подписываю постоянным ключом"
           else
             echo "::warning::Секрет KEYSTORE_BASE64 не задан — APK будет с временным ключом"
