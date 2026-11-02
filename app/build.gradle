@@ -11,7 +11,7 @@ android {
         minSdk 26
         targetSdk 34
         // номер версии растёт с каждой сборкой на GitHub — RuStore требует это для обновлений
-        def run = (System.getenv("GITHUB_RUN_NUMBER") ?: "1") as int
+        def run = Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
         versionCode run
         versionName "1.0.${run}"
     }
@@ -24,9 +24,9 @@ android {
         release {
             if (ksFile.exists() && ksPass) {
                 storeFile ksFile
-                storePassword ksPass
+                storePassword ksPass.trim()
                 keyAlias 'liclock'
-                keyPassword ksPass
+                keyPassword ksPass.trim()
             }
         }
     }
@@ -34,7 +34,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig (ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug
+            signingConfig = (ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug
         }
     }
 
