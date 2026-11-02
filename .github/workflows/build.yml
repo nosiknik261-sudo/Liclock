@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,3 +29,14 @@ jobs:
         with:
           name: LiClock-apk
           path: app/build/outputs/apk/release/*.apk
+
+      - name: Переименовать APK
+        run: cp app/build/outputs/apk/release/app-release.apk LiClock.apk
+
+      - name: Опубликовать релиз
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Часы ${{ github.run_number }}
+          make_latest: true
+          files: LiClock.apk
