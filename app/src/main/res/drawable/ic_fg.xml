@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Циферблат: кольцо, метки 12/3/6/9, стрелки ~10:10 с бирюзовым акцентом -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <path android:fillColor="#00000000" android:strokeColor="#E6F1FB" android:strokeWidth="2.5"
+        android:pathData="M54,28 A26,26 0 1,1 53.99,28 Z" />
+    <path android:strokeColor="#E6F1FB" android:strokeWidth="2.5" android:strokeLineCap="round"
+        android:pathData="M54,32 L54,36 M76,54 L72,54 M54,76 L54,72 M32,54 L36,54" />
+    <path android:strokeColor="#E6F1FB" android:strokeWidth="3.5" android:strokeLineCap="round"
+        android:pathData="M54,54 L43,47" />
+    <path android:strokeColor="#E6F1FB" android:strokeWidth="2.5" android:strokeLineCap="round"
+        android:pathData="M54,54 L67,39" />
+    <path android:strokeColor="#5DCAA5" android:strokeWidth="1.2" android:strokeLineCap="round"
+        android:pathData="M51,58 L62,67" />
+    <path android:fillColor="#5DCAA5"
+        android:pathData="M54,51.5 A2.5,2.5 0 1,1 53.99,51.5 Z" />
+</vector>

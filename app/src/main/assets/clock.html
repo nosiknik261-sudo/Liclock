@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Часы</title>
+<style>
+@font-face{font-family:Manrope;src:url(manrope-cyr.woff2) format('woff2');font-weight:200 800;unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Manrope;src:url(manrope-lat.woff2) format('woff2');font-weight:200 800}
+html,body{margin:0;height:100%;overflow:hidden;background:#111113;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+body{transition:background .6s}
+svg{display:block;width:100vw;height:100vh;font-family:Manrope,sans-serif}
+svg text{font-variant-numeric:tabular-nums}
+#ui{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;opacity:0;pointer-events:none;transition:opacity .35s;font-family:Manrope,sans-serif}
+#ui.show{opacity:1;pointer-events:auto}
+.bar{display:flex;flex-wrap:wrap;justify-content:center;max-width:92vw;gap:1.2vh;padding:1.2vh;border-radius:5vh;background:rgba(30,30,32,.9)}
+.lbl{font:400 2.2vh Manrope,sans-serif;color:#B4B2A9;letter-spacing:.3vh;margin-bottom:-1.5vh}
+.bar button{font:500 2.6vh Manrope,sans-serif;color:#F1EFE8;background:transparent;border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:1.3vh 2.8vh;min-height:6vh}
+.bar button.on{background:#F1EFE8;color:#111113;border-color:#F1EFE8}
+</style>
+</head>
+<body>
+<svg id="svg" viewBox="0 0 320 200" preserveAspectRatio="xMidYMid meet">
+
+<!-- ===== Классика с панелями ===== -->
+<g id="classic">
+ <g text-anchor="middle">
+  <text x="42" y="40" font-size="6" letter-spacing="2" class="mut" id="lw"></text>
+  <text x="42" y="66" font-size="24" font-weight="200" class="fg" id="ld">00:00</text>
+  <text x="42" y="80" font-size="7.5" font-weight="300" class="fg" id="ldt"></text>
+  <line x1="20" x2="64" y1="94" y2="94" stroke-width="0.4" class="ln"/>
+  <g id="wk"></g>
+  <text x="42" y="150" font-size="5.5" class="mut" id="lyr"></text>
+
+  <text x="278" y="40" font-size="6" letter-spacing="2" class="mut">СОЛНЦЕ</text>
+  <path d="M252 70 Q278 26 304 70" fill="none" stroke-width="0.8" stroke-dasharray="1.5 2" class="lns"/>
+  <line x1="250" x2="306" y1="70" y2="70" stroke-width="0.4" class="ln"/>
+  <circle id="sun" r="3.2" class="accf"/>
+  <text x="264" y="82" font-size="6.5" class="fg" id="sr"></text>
+  <text x="292" y="82" font-size="6.5" class="fg" id="ss"></text>
+  <text x="278" y="91" font-size="5.5" class="mut" id="sl"></text>
+  <line x1="256" x2="300" y1="101" y2="101" stroke-width="0.4" class="ln"/>
+  <text x="278" y="114" font-size="6" letter-spacing="2" class="mut">ЛУНА</text>
+  <circle cx="278" cy="132" r="9" class="moonbg"/>
+  <path id="moon" transform="translate(278 132)" class="moonf"/>
+  <text x="278" y="152" font-size="6.5" class="fg" id="mn"></text>
+  <text x="278" y="161" font-size="5.5" class="mut" id="mp"></text>
+ </g>
+ <g transform="translate(160 100)">
+  <circle r="88" fill="none" stroke-width="0.8" class="ring"/>
+  <circle r="80" class="dial"/>
+  <g id="ticks"></g>
+  <g id="nums" font-weight="300" font-size="13" text-anchor="middle" dominant-baseline="central"></g>
+  <text y="-34" text-anchor="middle" font-size="6" letter-spacing="2" class="mut city"></text>
+  <rect x="38" y="-7" width="22" height="14" rx="2" class="win"/>
+  <text id="bd" x="49" y="0.5" text-anchor="middle" dominant-baseline="central" font-weight="500" font-size="9" class="wt"></text>
+  <text id="bw" y="34" text-anchor="middle" font-size="6.5" letter-spacing="1.5" class="mut"></text>
+  <g id="hh"><path d="M-3.2 8 L-2.2 -40 L0 -44 L2.2 -40 L3.2 8 Z" class="hand"/><path d="M-1.2 -14 L-1 -38 L1 -38 L1.2 -14Z" class="accf"/></g>
+  <g id="mh"><path d="M-2.4 10 L-1.6 -62 L0 -67 L1.6 -62 L2.4 10 Z" class="hand"/><path d="M-0.9 -20 L-0.7 -60 L0.7 -60 L0.9 -20Z" class="accf"/></g>
+  <g id="sh"><line y1="18" y2="-72" stroke-width="1" class="accs"/><circle r="3.2" class="accf"/><circle cy="14" r="2.4" class="accf"/></g>
+  <circle r="1.3" class="cap"/>
+ </g>
+</g>
+
+<!-- ===== Минимализм ===== -->
+<g id="minimal" style="display:none">
+ <text x="20" y="24" font-size="6.5" letter-spacing="2" class="mut" id="aw"></text>
+ <text x="300" y="24" font-size="6.5" letter-spacing="2" text-anchor="end" class="mut city"></text>
+ <text id="at" x="160" y="118" font-size="78" font-weight="200" letter-spacing="-2" text-anchor="middle" class="fg">00:00</text>
+ <text id="as" x="250" y="72" font-size="15" font-weight="300" class="accf">00</text>
+ <text id="ad" x="160" y="144" font-size="10" font-weight="300" text-anchor="middle" class="fg"></text>
+ <rect x="70" y="155" width="180" height="0.8" class="trkf"/>
+ <rect id="ab" x="70" y="155" width="0" height="0.8" class="accf"/>
+ <text x="20" y="187" font-size="6" letter-spacing="0.5" class="mut" id="asun"></text>
+ <text x="300" y="187" font-size="6" letter-spacing="0.5" text-anchor="end" class="mut" id="amoon"></text>
+</g>
+</svg>
+
+<div id="ui">
+ <div class="lbl">ЦИФЕРБЛАТ</div><div class="bar" id="faces"></div>
+ <div class="lbl">ТЕМА</div><div class="bar" id="themes"></div>
+ <div class="lbl">ЧАСОВОЙ ПОЯС</div><div class="bar" id="tzbar"></div>
+</div>
+
+<script>
+'use strict';
+/* ---------- темы ---------- */
+const THEMES={
+ 'Графит':{bg:'#111113',fg:'#F1EFE8',sub:'#888780',acc:'#EF9F27',trk:'#2C2C2A',dial:'#18181B',win:'#F1EFE8',wt:'#111113'},
+ 'Ночь':  {bg:'#06121F',fg:'#E6F1FB',sub:'#6F8FB0',acc:'#5DCAA5',trk:'#163049',dial:'#0A1B2C',win:'#E6F1FB',wt:'#06121F'},
+ 'Бордо': {bg:'#1E0E12',fg:'#FBEAF0',sub:'#A87B88',acc:'#F0997B',trk:'#3A1C23',dial:'#2A1218',win:'#FBEAF0',wt:'#1E0E12'},
+ 'Светлая':{bg:'#F1EFE8',fg:'#2C2C2A',sub:'#888780',acc:'#D85A30',trk:'#D3D1C7',dial:'#FFFFFF',win:'#2C2C2A',wt:'#FFFFFF'}
+};
+const THEME_NAMES=['Авто','Графит','Ночь','Бордо','Светлая'];
+/* «Авто»: днём Графит, после заката Ночь */
+const TZ=[null,2,3,4,5,6,7,8,9,10,11,12];
+const TZ_NAMES={2:'Калининград',3:'Москва',4:'Самара',5:'Екатеринбург',6:'Омск',7:'Новосибирск',8:'Иркутск',9:'Якутск',10:'Владивосток',11:'Магадан',12:'Камчатка'};
+
+/* ---------- настройки ---------- */
+function load(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+let face=load('face','classic'), theme=load('theme','Авто'), tz=load('tz',null);
+let LAT=55.7558, LNG=37.6173, CITY='МОСКВА';
+const saved=load('loc',null); if(saved){LAT=saved.lat;LNG=saved.lng;CITY=saved.city||''}
+
+/* Вызывается из Android с координатами машины */
+window.setLoc=function(lat,lng,city){LAT=lat;LNG=lng;CITY=(city||'').toUpperCase();save('loc',{lat:LAT,lng:LNG,city:CITY});lastMin=-1};
+
+/* ---------- время ---------- */
+const $=id=>document.getElementById(id), q=s=>document.querySelectorAll(s), R=Math.PI/180;
+const p=x=>String(x).padStart(2,'0');
+/* перевод абсолютного времени в «показываемое» с учётом выбранного пояса */
+function shown(d){return tz===null?d:new Date(d.getTime()+(tz*60+d.getTimezoneOffset())*60000)}
+const hm=d=>{const s=shown(d);return p(s.getHours())+':'+p(s.getMinutes())};
+
+function sunTimes(d){
+ const J=d.getTime()/864e5+2440587.5, n=Math.round(J-2451545+0.0008), Js=n-LNG/360;
+ const M=(357.5291+0.98560028*Js)%360, C=1.9148*Math.sin(M*R)+0.02*Math.sin(2*M*R)+0.0003*Math.sin(3*M*R);
+ const L=(M+C+282.9372)%360, Jt=2451545+Js+0.0053*Math.sin(M*R)-0.0069*Math.sin(2*L*R);
+ const sd=Math.sin(L*R)*Math.sin(23.44*R), cd=Math.cos(Math.asin(sd));
+ const cw=(Math.sin(-0.833*R)-Math.sin(LAT*R)*sd)/(Math.cos(LAT*R)*cd);
+ if(cw>=1) return {polar:'night'}; if(cw<=-1) return {polar:'day'};
+ const w=Math.acos(cw)/R, f=j=>new Date((j-2440587.5)*864e5);
+ return {rise:f(Jt-w/360), set:f(Jt+w/360)};
+}
+function moonPhase(d){
+ const syn=29.530588, age=(((d-Date.UTC(2000,0,6,18,14))/864e5)%syn+syn)%syn, ph=age/syn;
+ const k=Math.cos(2*Math.PI*ph), r=9, rx=Math.abs(k)*r;
+ const path=ph<0.5
+  ?`M0 ${-r}A${r} ${r} 0 0 1 0 ${r}A${rx} ${r} 0 0 ${k>0?0:1} 0 ${-r}Z`
+  :`M0 ${-r}A${r} ${r} 0 0 0 0 ${r}A${rx} ${r} 0 0 ${k>0?1:0} 0 ${-r}Z`;
+ const names=['новолуние','растущий серп','первая четверть','растущая луна','полнолуние','убывающая луна','последняя четверть','убывающий серп'];
+ return {path,name:names[Math.floor(ph*8+0.5)%8],il:Math.round((1-k)/2*100)};
+}
+
+/* ---------- раскраска ---------- */
+let isNight=false;
+function curTheme(){return THEMES[theme==='Авто'?(isNight?'Ночь':'Графит'):theme]}
+function attr(sel,k,v){q(sel).forEach(e=>e.setAttribute(k,v))}
+function paint(){
+ const t=curTheme();
+ document.body.style.background=t.bg;
+ attr('.ring','stroke',t.trk);attr('.ln','stroke',t.trk);attr('.lns','stroke',t.sub);
+ attr('.dial','fill',t.dial);attr('.hand','fill',t.fg);attr('.fg','fill',t.fg);
+ attr('.accf','fill',t.acc);attr('.accs','stroke',t.acc);attr('.mut','fill',t.sub);
+ attr('.win','fill',t.win);attr('.wt','fill',t.wt);attr('.cap','fill',t.bg);
+ attr('#nums text','fill',t.fg);attr('.moonbg','fill',t.trk);attr('.moonf','fill',t.fg);attr('.trkf','fill',t.trk);
+ q('.tk').forEach(e=>e.setAttribute('stroke',e.dataset.m?t.fg:t.sub));
+ q('.wn').forEach(e=>e.setAttribute('fill',e.dataset.t?t.wt:(e.dataset.o?t.fg:t.sub)));
+ q('.wc').forEach(e=>e.setAttribute('fill',e.dataset.t?t.acc:'none'));
+}
+
+/* ---------- статичная разметка циферблата ---------- */
+(function(){
+ let s='';
+ for(let i=0;i<60;i++){const a=i*Math.PI/30,m=i%5===0,r2=m?70:75;
+  s+=`<line class="tk" ${m?'data-m="1"':''} x1="${78*Math.sin(a)}" y1="${-78*Math.cos(a)}" x2="${r2*Math.sin(a)}" y2="${-r2*Math.cos(a)}" stroke-width="${m?1.6:0.6}" stroke-linecap="round"/>`}
+ $('ticks').innerHTML=s;
+ let n='';[12,1,2,3,4,5,6,7,8,9,10,11].forEach((v,i)=>{if(v===3)return;const a=i*Math.PI/6;n+=`<text x="${60*Math.sin(a)}" y="${-60*Math.cos(a)}">${v}</text>`});
+ $('nums').innerHTML=n;
+})();
+
+/* ---------- обновление раз в минуту ---------- */
+let lastMin=-1;
+function perMinute(now){
+ const d=shown(now), st=sunTimes(now), mo=moonPhase(now);
+ const wdLong=d.toLocaleDateString('ru-RU',{weekday:'long'});
+ q('.city').forEach(e=>e.textContent=tz!==null&&!CITY?TZ_NAMES[tz].toUpperCase():CITY);
+
+ /* солнце */
+ if(st.rise){
+  const len=(st.set-st.rise)/6e4;
+  $('sr').textContent='↑ '+hm(st.rise);$('ss').textContent='↓ '+hm(st.set);
+  $('sl').textContent='день '+Math.floor(len/60)+' ч '+Math.round(len%60)+' мин';
+  const f=(now-st.rise)/(st.set-st.rise); isNight=!(f>=0&&f<=1);
+  if(!isNight){const u=f,x=(1-u)*(1-u)*252+2*(1-u)*u*278+u*u*304,y=(1-u)*(1-u)*70+2*(1-u)*u*26+u*u*70;
+   $('sun').setAttribute('cx',x);$('sun').setAttribute('cy',y);$('sun').setAttribute('opacity',1)}
+  else{$('sun').setAttribute('cx',f<0?252:304);$('sun').setAttribute('cy',70);$('sun').setAttribute('opacity',0.35)}
+  $('asun').textContent='восход '+hm(st.rise)+'  ·  закат '+hm(st.set);
+ }else{
+  isNight=st.polar==='night';
+  $('sr').textContent='';$('ss').textContent='';
+  $('sl').textContent=isNight?'полярная ночь':'полярный день';
+  $('sun').setAttribute('cx',278);$('sun').setAttribute('cy',isNight?70:26);$('sun').setAttribute('opacity',isNight?0.35:1);
+  $('asun').textContent=$('sl').textContent;
+ }
+ /* луна */
+ $('moon').setAttribute('d',mo.path);$('mn').textContent=mo.name;$('mp').textContent='освещено '+mo.il+'%';
+ $('amoon').textContent=mo.name+'  ·  '+mo.il+'%';
+
+ /* левая панель */
+ $('lw').textContent=wdLong.toUpperCase();
+ $('ldt').textContent=d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+ const doy=Math.floor((Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())-Date.UTC(d.getFullYear(),0,1))/864e5)+1;
+ const t0=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())),dn=t0.getUTCDay()||7;t0.setUTCDate(t0.getUTCDate()+4-dn);
+ const wn=Math.ceil(((t0-Date.UTC(t0.getUTCFullYear(),0,1))/864e5+1)/7);
+ $('lyr').textContent='неделя '+wn+' · день '+doy;
+ const wd=(d.getDay()+6)%7, L=['П','В','С','Ч','П','С','В'];let g='';
+ for(let i=0;i<7;i++){const x=42+(i-3)*8.6,dd=new Date(d.getFullYear(),d.getMonth(),d.getDate()-wd+i),td=i===wd;
+  g+=`<text x="${x}" y="110" font-size="5" class="wn" ${i>=5?'data-o="1"':''}>${L[i]}</text>`+
+     `<circle cx="${x}" cy="122" r="4" class="wc" ${td?'data-t="1"':''}/>`+
+     `<text x="${x}" y="122" dominant-baseline="central" font-size="5.5" font-weight="${td?500:300}" class="wn" ${td?'data-t="1"':'data-o="1"'}>${dd.getDate()}</text>`}
+ $('wk').innerHTML=g;
+ $('bd').textContent=d.getDate();
+ $('bw').textContent=d.toLocaleDateString('ru-RU',{weekday:'short'}).toUpperCase();
+
+ /* минимализм */
+ $('aw').textContent=wdLong.toUpperCase();
+ $('ad').textContent=d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}).replace(' г.','');
+ $('at').textContent=p(d.getHours())+':'+p(d.getMinutes());
+ try{const w=$('at').getComputedTextLength();$('as').setAttribute('x',160+w/2+2)}catch(e){}
+ paint();
+}
+
+/* ---------- каждый кадр ---------- */
+function frame(){
+ const now=new Date(), d=shown(now), h=d.getHours(), m=d.getMinutes(), S=d.getSeconds()+d.getMilliseconds()/1000;
+ if(m!==lastMin){lastMin=m;perMinute(now)}
+ if(face==='classic'){
+  $('ld').textContent=p(h)+':'+p(m);
+  $('hh').setAttribute('transform',`rotate(${(h%12+m/60)*30})`);
+  $('mh').setAttribute('transform',`rotate(${(m+S/60)*6})`);
+  $('sh').setAttribute('transform',`rotate(${S*6})`);
+ }else{
+  $('as').textContent=p(d.getSeconds());
+  $('ab').setAttribute('width',S/60*180);
+ }
+ requestAnimationFrame(frame);
+}
+
+/* ---------- меню по касанию ---------- */
+let hideT=null;
+function bar(id,items,cur,onPick){
+ const el=$(id);el.innerHTML='';
+ items.forEach(([val,label])=>{const b=document.createElement('button');b.textContent=label;if(val===cur)b.className='on';
+  b.onclick=e=>{e.stopPropagation();onPick(val);buildUI();showUI()};el.appendChild(b)});
+}
+function buildUI(){
+ bar('faces',[['classic','Классика'],['minimal','Минимализм']],face,v=>{face=v;save('face',v);applyFace()});
+ bar('themes',THEME_NAMES.map(n=>[n,n]),theme,v=>{theme=v;save('theme',v);paint()});
+ bar('tzbar',[[null,'Время машины'],[2,'+2'],[3,'МСК'],[4,'+4'],[5,'+5'],[6,'+6'],[7,'+7'],[8,'+8'],[9,'+9'],[10,'+10'],[11,'+11'],[12,'+12']],tz,v=>{tz=v;save('tz',v);lastMin=-1});
+}
+function showUI(){$('ui').classList.add('show');clearTimeout(hideT);hideT=setTimeout(()=>$('ui').classList.remove('show'),5000)}
+function applyFace(){$('classic').style.display=face==='classic'?'':'none';$('minimal').style.display=face==='minimal'?'':'none';lastMin=-1}
+document.addEventListener('click',()=>{if($('ui').classList.contains('show'))$('ui').classList.remove('show');else showUI()});
+
+
+buildUI();applyFace();
+(document.fonts?document.fonts.ready:Promise.resolve()).then(()=>{lastMin=-1});
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
