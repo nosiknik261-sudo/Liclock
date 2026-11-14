@@ -2,6 +2,9 @@ name: Собрать APK
 
 on:
   push:
+    paths-ignore:
+      - 'cozytv/**'
+      - '.github/workflows/build-tv.yml'
   workflow_dispatch:
 
 permissions:

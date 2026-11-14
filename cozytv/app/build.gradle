@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'ru.sova.cozyscreen'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ru.sova.cozyscreen'
+        // Android 7+: на нём работает большинство ТВ-приставок и телевизоров
+        minSdk 24
+        targetSdk 34
+        // номер версии растёт с каждой сборкой на GitHub — RuStore требует это для обновлений
+        def run = Integer.parseInt(System.getenv("GITHUB_RUN_NUMBER") ?: "1")
+        versionCode run
+        versionName "1.0.${run}"
+    }
+
+    // Тот же постоянный ключ, что и у часов: секреты KEYSTORE_BASE64 и KEYSTORE_PASSWORD
+    def ksFile = file("${rootDir}/release.jks")
+    def ksPass = System.getenv("KEYSTORE_PASSWORD")
+    signingConfigs {
+        release {
+            if (ksFile.exists() && ksPass) {
+                storeFile ksFile
+                storePassword ksPass.trim()
+                keyAlias 'liclock'
+                keyPassword ksPass.trim()
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig = (ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug
+        }
+    }
+
+    // mp3 уже сжаты — не тратим время на повторное сжатие
+    androidResources {
+        noCompress 'mp3'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
